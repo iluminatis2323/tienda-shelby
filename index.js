@@ -2,12 +2,15 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const app = express();
-const PORT = 3000;
+
+// En Render o Heroku, el puerto lo da la variable de entorno PORT,
+// si no está definida, usamos 3000 para desarrollo local
+const PORT = process.env.PORT || 3000;
 
 // Middleware para leer JSON desde el cliente
 app.use(express.json());
 
-// CORS para que AppCreator24 pueda acceder
+// CORS para que AppCreator24 u otros clientes puedan acceder
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -31,11 +34,11 @@ app.post('/pedido', (req, res) => {
   const pedido = req.body;
   console.log("📦 Pedido recibido:", pedido);
 
-  // Aquí luego lo conectamos con Telegram
+  // Aquí luego lo conectamos con Telegram o base de datos
   res.json({ mensaje: "Pedido recibido correctamente ✅" });
 });
 
-// Iniciar el servidor
+// Iniciar el servidor en el puerto correcto (Render asigna el puerto dinámicamente)
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`🚀 Servidor corriendo en el puerto ${PORT}`);
 });
