@@ -1,0 +1,30 @@
+[
+  {
+    "nombre": "Celular Samsung A12",
+    "precio": 120000,
+    "categoria": "celulares",
+    "imagen": "https://cdn.pixabay.com/photo/2020/05/29/07/17/mobile-5235243_960_720.jpg",
+    "envio": true,
+    "oferta": true,
+    "cuotas": true
+  },
+  {
+    "nombre": "Notebook Lenovo i5",
+    "precio": 350000,
+    "categoria": "notebooks",
+    "imagen": "https://cdn.pixabay.com/photo/2015/01/21/14/14/apple-606761_960_720.jpg",
+    "envio": true,
+    "oferta": false,
+    "cuotas": true
+  },
+  {
+    "nombre": "Silla Gamer",
+    "precio": 80000,
+    "categoria": "hogar",
+    "imagen": "https://cdn.pixabay.com/photo/2020/03/26/10/31/gaming-chair-4968859_960_720.jpg",
+    "envio": false,
+    "oferta": true,
+    "cuotas": true
+  }
+]
+

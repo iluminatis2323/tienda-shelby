@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tienda Financiera Shelby</title>
+  <style>
+    :root {
+      --bg-color: #000;
+      --text-color: white;
+      --primary-color: #00cc99;
+      --secondary-color: #1f1f1f;
+      --highlight: #00ffcc;
+    }
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Arial', sans-serif;
+      padding: 10px;
+    }
+    h1, h2 {
+      color: var(--highlight);
+      text-align: center;
+    }
+    .filtros input, .filtros select {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .card {
+      background: var(--secondary-color);
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px var(--highlight);
+    }
+    .card img {
+      width: 100%;
+      border-radius: 5px;
+      height: 180px;
+      object-fit: cover;
+    }
+    .card button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .comprar {
+      background: var(--primary-color);
+      color: white;
+    }
+    .carrito {
+      background: #111;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    .btn-quitar, .btn-cantidad {
+      background: #ff4444;
+      color: white;
+      padding: 2px 8px;
+      margin-left: 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn-cantidad {
+      background: #00cc99;
+    }
+    .toggle-tema {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #notificacion {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary-color);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <button class="toggle-tema" onclick="alternarTema()">🌗 Modo Claro/Oscuro</button>
+  <h1>🛍️ Tienda Financiera Shelby</h1>
+
+  <div class="filtros">
+    <input type="text" id="busqueda" placeholder="Buscar productos..." oninput="filtrarProductos()" />
+    <select id="categoria" onchange="filtrarProductos()">
+      <option value="">Todas las categorías</option>
+      <option value="prestamos">💸 Préstamos personales</option>
+      <option value="celulares">📱 Celulares y accesorios</option>
+      <option value="notebooks">💻 Notebooks y tecnología</option>
+      <option value="electro">🛏️ Electrodomésticos y muebles</option>
+      <option value="hogar">🪑 Hogar</option>
+      <option value="utiles">🎒 Útiles escolares</option>
+      <option value="herramientas">💰 Herramientas</option>
+    </select>
+  </div>
+
+  <div class="carrito">
+    <h2>🛒 Carrito</h2>
+    <ul id="listaCarrito"></ul>
+    <p><strong>Total:</strong> $<span id="totalCarrito">0</span></p>
+    <button onclick="enviarCarritoWhatsApp()">📲 Solicitar carrito por WhatsApp</button>
+    <button onclick="simularPago()" style="margin-top:10px;">💳 Simular Pago QR</button>
+  </div>
+
+  <div class="productos grid" id="productos"></div>
+  <div id="notificacion"></div>
+
+  <script>
+    let productos = [];
+    let carrito = [];
+
+    async function cargarProductos() {
+      try {
+        const res = await fetch('/productos');
+        productos = await res.json();
+        mostrarProductos();
+        cargarCarrito();
+      } catch (err) {
+        alert("❌ No se pudieron cargar los productos.");
+      }
+    }
+
+    function mostrarNotificacion(msg) {
+      const n = document.getElementById("notificacion");
+      n.textContent = msg;
+      n.style.display = "block";
+      setTimeout(() => n.style.display = "none", 2000);
+    }
+
+    function mostrarProductos() {
+      const contenedor = document.getElementById("productos");
+      contenedor.innerHTML = "";
+      productos.forEach((p, i) => {
+        contenedor.innerHTML += `
+          <div class="card">
+            <img src="${p.imagen}" alt="${p.nombre}" />
+            <h3>${p.nombre}</h3>
+            <p><strong>Contado:</strong> $${p.precio}</p>
+            <p><strong>4 cuotas:</strong> $${(p.precio * 1.4).toFixed(0)}</p>
+            <p>${p.envio ? '🚚 Envío' : ''} ${p.oferta ? '🏷️ Oferta' : ''} ${p.cuotas ? '💳 Cuotas' : ''}</p>
+            <button class="comprar" onclick="agregarAlCarrito('${p.nombre}', ${p.precio})">Agregar al carrito</button>
+            <a href="https://wa.me/5493813885182?text=Hola! Quiero este producto: ${encodeURIComponent(p.nombre)}" target="_blank">
+              <button class="comprar">Solicitar por WhatsApp</button>
+            </a>
+          </div>`;
+      });
+    }
+
+    function filtrarProductos() {
+      const texto = document.getElementById("busqueda").value.toLowerCase();
+      const cat = document.getElementById("categoria").value;
+      const filtrados = productos.filter(p =>
+        p.nombre.toLowerCase().includes(texto) &&
+        (!cat || p.categoria === cat)
+      );
+      const contenedor = document.getElementById("productos");
+      contenedor.innerHTML = "";
+      filtrados.forEach((p, i) => {
+        contenedor.innerHTML += `
+          <div class="card">
+            <img src="${p.imagen}" alt="${p.nombre}" />
+            <h3>${p.nombre}</h3>
+            <p><strong>Contado:</strong> $${p.precio}</p>
+            <p><strong>4 cuotas:</strong> $${(p.precio * 1.4).toFixed(0)}</p>
+            <p>${p.envio ? '🚚 Envío' : ''} ${p.oferta ? '🏷️ Oferta' : ''} ${p.cuotas ? '💳 Cuotas' : ''}</p>
+            <button class="comprar" onclick="agregarAlCarrito('${p.nombre}', ${p.precio})">Agregar al carrito</button>
+            <a href="https://wa.me/5493813885182?text=Hola! Quiero este producto: ${encodeURIComponent(p.nombre)}" target="_blank">
+              <button class="comprar">Solicitar por WhatsApp</button>
+            </a>
+          </div>`;
+      });
+    }
+
+    function agregarAlCarrito(nombre, precio) {
+      const existente = carrito.find(p => p.nombre === nombre);
+      if (existente) {
+        existente.cantidad++;
+      } else {
+        carrito.push({ nombre, precio, cantidad: 1 });
+      }
+      guardarCarrito();
+      actualizarCarrito();
+      mostrarNotificacion("✅ Agregado al carrito");
+    }
+
+    function quitarDelCarrito(nombre) {
+      carrito = carrito.filter(p => p.nombre !== nombre);
+      guardarCarrito();
+      actualizarCarrito();
+      mostrarNotificacion("❌ Eliminado del carrito");
+    }
+
+    function cambiarCantidad(nombre, delta) {
+      const item = carrito.find(p => p.nombre === nombre);
+      if (!item) return;
+      item.cantidad += delta;
+      if (item.cantidad < 1) quitarDelCarrito(nombre);
+      else {
+        guardarCarrito();
+        actualizarCarrito();
+      }
+    }
+
+    function actualizarCarrito() {
+      const lista = document.getElementById("listaCarrito");
+      const total = document.getElementById("totalCarrito");
+      lista.innerHTML = "";
+      let suma = 0;
+      carrito.forEach(p => {
+        lista.innerHTML += `
+          <li>
+            ${p.nombre} - $${p.precio} x ${p.cantidad} = $${p.precio * p.cantidad}
+            <button class="btn-cantidad" onclick="cambiarCantidad('${p.nombre}', 1)">+</button>
+            <button class="btn-cantidad" onclick="cambiarCantidad('${p.nombre}', -1)">-</button>
+            <button class="btn-quitar" onclick="quitarDelCarrito('${p.nombre}')">❌</button>
+          </li>`;
+        suma += p.precio * p.cantidad;
+      });
+      total.textContent = suma;
+    }
+
+    function guardarCarrito() {
+      localStorage.setItem("carritoShelby", JSON.stringify(carrito));
+    }
+
+    function cargarCarrito() {
+      const guardado = localStorage.getItem("carritoShelby");
+      if (guardado) {
+        carrito = JSON.parse(guardado);
+        actualizarCarrito();
+      }
+    }
+
+    function enviarCarritoWhatsApp() {
+      if (carrito.length === 0) return alert("El carrito está vacío");
+      let mensaje = "Hola! Quiero estos productos:%0A";
+      carrito.forEach(p => {
+        mensaje += `- ${p.nombre} x${p.cantidad} ($${p.precio * p.cantidad})%0A`;
+      });
+      mensaje += `%0ATotal: $${carrito.reduce((a, b) => a + b.precio * b.cantidad, 0)}`;
+      window.open(`https://wa.me/5493813885182?text=${mensaje}`, '_blank');
+    }
+
+    function simularPago() {
+      fetch('/pedido', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ carrito })
+      }).then(res => res.json())
+        .then(data => alert("✅ Pedido enviado al servidor.\n" + data.mensaje))
+        .catch(() => alert("❌ Error al enviar pedido"));
+    }
+
+    function alternarTema() {
+      const root = document.documentElement;
+      const oscuro = root.style.getPropertyValue('--bg-color') === '#000';
+      if (oscuro) {
+        root.style.setProperty('--bg-color', '#f2f2f2');
+        root.style.setProperty('--text-color', '#000');
+        root.style.setProperty('--secondary-color', '#ddd');
+        root.style.setProperty('--highlight', '#00aa77');
+        root.style.setProperty('--primary-color', '#007755');
+      } else {
+        root.style.setProperty('--bg-color', '#000');
+        root.style.setProperty('--text-color', 'white');
+        root.style.setProperty('--secondary-color', '#1f1f1f');
+        root.style.setProperty('--highlight', '#00ffcc');
+        root.style.setProperty('--primary-color', '#00cc99');
+      }
+    }
+
+    window.onload = cargarProductos;
+  </script>
+</body>
+</html>
+
+
+
