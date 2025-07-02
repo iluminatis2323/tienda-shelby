@@ -178,8 +178,8 @@
   <div id="notificacion" style="display:none;"></div>
 
   <!-- 🧠 Scripts -->
-  <script src="helpers.js"></script> <!-- si tenés funciones auxiliares -->
-  <script src="tema.js"></script>    <!-- modo claro/oscuro -->
+  <script src="helpers.js"></script>
+  <script src="tema.js"></script>
 
   <!-- 🌐 Scripts modulares -->
   <script type="module">
@@ -188,30 +188,30 @@
     import { enviarCarritoWhatsApp } from './tienda.cmds/whatsapp.js';
     import { simularPago } from './tienda.cmds/simulador.js';
 
+    let productos = [];
+
+    // Exponer funciones necesarias
     window.agregarAlCarrito = agregarAlCarrito;
     window.enviarCarritoWhatsApp = enviarCarritoWhatsApp;
     window.simularPago = simularPago;
-    window.filtrarProductos = () => filtrarProductos(productos, agregarAlCarrito);
     window.cambiarCantidad = cambiarCantidad;
     window.quitarDelCarrito = quitarDelCarrito;
 
-    let productos = [];
+    // Filtro corregido
+    function filtrarYMostrar() {
+      filtrarProductos(productos, agregarAlCarrito);
+    }
+    window.filtrarProductos = filtrarYMostrar;
 
+    // Carrito UI
     const btnCarrito = document.getElementById('btnCarrito');
     const panelCarrito = document.getElementById('panelCarrito');
     const cerrarPanel = document.getElementById('cerrarPanel');
     const contadorCarrito = document.getElementById('contadorCarrito');
 
-    // Mostrar o esconder panel del carrito
     btnCarrito.addEventListener('click', () => {
-      if (panelCarrito.style.display === 'block') {
-        panelCarrito.style.display = 'none';
-        btnCarrito.title = "Abrir carrito";
-      } else {
-        panelCarrito.style.display = 'block';
-        panelCarrito.focus();
-        btnCarrito.title = "Cerrar carrito";
-      }
+      panelCarrito.style.display = panelCarrito.style.display === 'block' ? 'none' : 'block';
+      btnCarrito.title = panelCarrito.style.display === 'block' ? "Cerrar carrito" : "Abrir carrito";
     });
 
     cerrarPanel.addEventListener('click', () => {
@@ -219,13 +219,11 @@
       btnCarrito.title = "Abrir carrito";
     });
 
-    // Actualizar contador y total en botón carrito cada vez que el carrito cambia
     function actualizarContador() {
       const totalCantidad = carrito.reduce((acc, item) => acc + item.cantidad, 0);
       contadorCarrito.textContent = totalCantidad;
     }
 
-    // Sobrescribimos actualizarCarrito para también actualizar el contador del botón
     const actualizarCarritoOriginal = actualizarCarrito;
     actualizarCarrito = () => {
       actualizarCarritoOriginal();
@@ -233,10 +231,12 @@
     };
     window.actualizarCarrito = actualizarCarrito;
 
+    // Carga inicial
     window.onload = async () => {
       try {
         const res = await fetch('https://tienda-shelby.onrender.com/productos');
         productos = await res.json();
+        window.productos = productos;
         console.log("📦 Productos cargados:", productos);
         mostrarProductos(productos, agregarAlCarrito);
         cargarCarrito();
@@ -249,6 +249,7 @@
   </script>
 </body>
 </html>
+
 
 
 
