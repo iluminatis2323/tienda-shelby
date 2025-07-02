@@ -3,7 +3,7 @@ const { Telegraf, Scenes, session, Markup } = require('telegraf');
 const fs = require('fs');
 const path = require('path');
 
-// ✅ Token del bot desde la variable de entorno
+// ✅ Token del bot desde .env
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const ADMIN_ID = 6500959070;
 
@@ -69,7 +69,7 @@ const subir = new Scenes.WizardScene('subir-producto',
       if (ctx.session.fotos.length < 3) {
         return ctx.reply('⚠️ Debés enviar al menos 3 fotos.');
       }
-      ctx.reply('🛍️ Ingresá el *título del producto*', { parse_mode: 'Markdown' });
+      ctx.reply('🛍️ Ingresá el *nombre del producto*', { parse_mode: 'Markdown' });
       return ctx.wizard.next();
     }
     if (!ctx.message.photo) return ctx.reply('❗Solo se aceptan fotos o el texto "listo"');
@@ -78,7 +78,7 @@ const subir = new Scenes.WizardScene('subir-producto',
     ctx.reply(`✅ Foto ${ctx.session.fotos.length} recibida.`);
   },
   (ctx) => {
-    ctx.session.titulo = ctx.message.text;
+    ctx.session.nombre = ctx.message.text;
     ctx.reply('✍️ Escribí una descripción del producto.');
     return ctx.wizard.next();
   },
@@ -112,16 +112,19 @@ const subir = new Scenes.WizardScene('subir-producto',
   (ctx) => {
     ctx.session.tienda = ctx.message.text;
 
-    // Guardar producto
+    // ✅ Guardar producto con estructura compatible con tienda.js
     const productos = cargarProductos();
     productos.push({
-      fotos: ctx.session.fotos,
-      titulo: ctx.session.titulo,
+      nombre: ctx.session.nombre,
       descripcion: ctx.session.descripcion,
       categoria: ctx.session.categoria,
       precio: ctx.session.precio,
       whatsapp: ctx.session.whatsapp,
       tienda: ctx.session.tienda,
+      imagen: `https://api.telegram.org/file/bot${process.env.BOT_TOKEN}/photos/${ctx.session.fotos[0]}`,
+      envio: true,
+      cuotas: true,
+      oferta: false,
       vendedor_id: ctx.from.id
     });
     guardarProductos(productos);
@@ -130,7 +133,7 @@ const subir = new Scenes.WizardScene('subir-producto',
 
     // Notificar al ADMIN
     bot.telegram.sendMessage(ADMIN_ID, `🆕 Nuevo producto:
-📌 ${ctx.session.titulo}
+📌 ${ctx.session.nombre}
 💰 $${ctx.session.precio}
 📱 ${ctx.session.whatsapp}
 🏪 ${ctx.session.tienda}`);
@@ -147,6 +150,6 @@ bot.command('subir', (ctx) => ctx.scene.enter('subir-producto'));
 // ⏯️ Iniciar el bot
 bot.launch();
 
-// ✅ Exportar el bot para usarlo desde index.js
+// ✅ Exportar para usar en index.js si se requiere
 module.exports = { bot };
 
