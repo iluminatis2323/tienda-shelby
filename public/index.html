@@ -4,6 +4,125 @@
   <meta charset="UTF-8" />
   <title>TucuShop</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Estilos para el carrito flotante */
+    #btnCarrito {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--highlight);
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+    #btnCarrito:hover {
+      background: var(--highlight);
+    }
+    #panelCarrito {
+      display: none;
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 320px;
+      max-height: 400px;
+      background: var(--secondary-color);
+      color: var(--text-color);
+      box-shadow: 0 0 15px var(--highlight);
+      border-radius: 8px;
+      padding: 15px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+    #panelCarrito h3 {
+      margin-top: 0;
+      text-align: center;
+      color: var(--highlight);
+    }
+    #cerrarPanel {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: transparent;
+      border: none;
+      font-size: 22px;
+      color: var(--highlight);
+      cursor: pointer;
+    }
+    #listaCarrito {
+      list-style: none;
+      padding-left: 0;
+      max-height: 230px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    #listaCarrito li {
+      margin-bottom: 8px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    #listaCarrito li span {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    #listaCarrito li button {
+      font-size: 14px;
+      padding: 2px 8px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      flex: 0 0 auto;
+    }
+    .btn-cantidad {
+      background: #00cc99;
+      color: white;
+    }
+    .btn-cantidad:hover {
+      opacity: 0.8;
+    }
+    .btn-quitar {
+      background: #ff4444;
+      color: white;
+    }
+    .btn-quitar:hover {
+      opacity: 0.8;
+    }
+    #panelCarrito p strong {
+      display: inline-block;
+      margin-right: 5px;
+    }
+    #panelCarrito button[onclick="enviarCarritoWhatsApp()"],
+    #panelCarrito button[onclick="simularPago()"] {
+      width: 100%;
+      margin-top: 5px;
+      background: var(--primary-color);
+      color: white;
+      font-weight: bold;
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #panelCarrito button[onclick="enviarCarritoWhatsApp()"]:hover,
+    #panelCarrito button[onclick="simularPago()"]:hover {
+      background: var(--highlight);
+    }
+  </style>
 </head>
 <body>
   <button class="toggle-tema" onclick="alternarTema()">🌗 Modo Claro/Oscuro</button>
@@ -40,7 +159,7 @@
   </div>
 
   <!-- Botón flotante para abrir/cerrar carrito -->
-  <button id="btnCarrito" title="Abrir carrito">🛒</button>
+  <button id="btnCarrito" title="Abrir carrito">🛒 <span id="contadorCarrito" style="font-weight:bold; font-size:14px; margin-left:4px;">0</span></button>
 
   <!-- Panel flotante del carrito -->
   <div id="panelCarrito" aria-label="Carrito de compras" role="dialog" aria-modal="true" tabindex="-1">
@@ -64,7 +183,7 @@
 
   <!-- 🌐 Scripts modulares -->
   <script type="module">
-    import { agregarAlCarrito, cargarCarrito, cambiarCantidad, quitarDelCarrito, actualizarCarrito } from './tienda.cmds/carrito.js';
+    import { agregarAlCarrito, cargarCarrito, cambiarCantidad, quitarDelCarrito, actualizarCarrito, carrito } from './tienda.cmds/carrito.js';
     import { mostrarProductos, filtrarProductos } from './tienda.cmds/productos.js';
     import { enviarCarritoWhatsApp } from './tienda.cmds/whatsapp.js';
     import { simularPago } from './tienda.cmds/simulador.js';
@@ -78,11 +197,12 @@
 
     let productos = [];
 
-    // Control para abrir/cerrar el carrito flotante
     const btnCarrito = document.getElementById('btnCarrito');
     const panelCarrito = document.getElementById('panelCarrito');
     const cerrarPanel = document.getElementById('cerrarPanel');
+    const contadorCarrito = document.getElementById('contadorCarrito');
 
+    // Mostrar o esconder panel del carrito
     btnCarrito.addEventListener('click', () => {
       if (panelCarrito.style.display === 'block') {
         panelCarrito.style.display = 'none';
@@ -99,6 +219,20 @@
       btnCarrito.title = "Abrir carrito";
     });
 
+    // Actualizar contador y total en botón carrito cada vez que el carrito cambia
+    function actualizarContador() {
+      const totalCantidad = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+      contadorCarrito.textContent = totalCantidad;
+    }
+
+    // Sobrescribimos actualizarCarrito para también actualizar el contador del botón
+    const actualizarCarritoOriginal = actualizarCarrito;
+    actualizarCarrito = () => {
+      actualizarCarritoOriginal();
+      actualizarContador();
+    };
+    window.actualizarCarrito = actualizarCarrito;
+
     window.onload = async () => {
       try {
         const res = await fetch('https://tienda-shelby.onrender.com/productos');
@@ -106,6 +240,7 @@
         console.log("📦 Productos cargados:", productos);
         mostrarProductos(productos, agregarAlCarrito);
         cargarCarrito();
+        actualizarContador();
       } catch (err) {
         alert("❌ No se pudieron cargar los productos.");
         console.error(err);
@@ -114,6 +249,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 

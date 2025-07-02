@@ -2,18 +2,7 @@ import { mostrarNotificacion } from './utils.js';
 
 export let carrito = [];
 
-const btnCarrito = document.getElementById('btnCarrito');
-const panelCarrito = document.getElementById('panelCarrito');
-const cerrarPanel = document.getElementById('cerrarPanel');
-
-btnCarrito.addEventListener('click', () => {
-  panelCarrito.style.display = 'block';
-});
-
-cerrarPanel.addEventListener('click', () => {
-  panelCarrito.style.display = 'none';
-});
-
+// Función para agregar un producto al carrito
 export function agregarAlCarrito(nombre, precio) {
   const existente = carrito.find(p => p.nombre === nombre);
   if (existente) {
@@ -26,6 +15,7 @@ export function agregarAlCarrito(nombre, precio) {
   mostrarNotificacion("✅ Agregado al carrito");
 }
 
+// Función para quitar un producto completo del carrito
 export function quitarDelCarrito(nombre) {
   carrito = carrito.filter(p => p.nombre !== nombre);
   guardarCarrito();
@@ -33,6 +23,7 @@ export function quitarDelCarrito(nombre) {
   mostrarNotificacion("❌ Eliminado del carrito");
 }
 
+// Cambiar la cantidad de un producto en el carrito, suma o resta según delta
 export function cambiarCantidad(nombre, delta) {
   const item = carrito.find(p => p.nombre === nombre);
   if (!item) return;
@@ -45,6 +36,7 @@ export function cambiarCantidad(nombre, delta) {
   }
 }
 
+// Actualiza el contenido visual del carrito en el DOM
 export function actualizarCarrito() {
   const lista = document.getElementById("listaCarrito");
   const total = document.getElementById("totalCarrito");
@@ -67,14 +59,12 @@ export function actualizarCarrito() {
   total.textContent = suma.toLocaleString('es-AR');
 }
 
-// Estas funciones expuestas para que el onclick en los botones dentro del HTML funcione
-window.cambiarCantidad = cambiarCantidad;
-window.quitarDelCarrito = quitarDelCarrito;
-
+// Guarda el carrito en localStorage
 export function guardarCarrito() {
   localStorage.setItem("carritoShelby", JSON.stringify(carrito));
 }
 
+// Carga el carrito desde localStorage y actualiza el DOM
 export function cargarCarrito() {
   const guardado = localStorage.getItem("carritoShelby");
   if (guardado) {
@@ -82,4 +72,9 @@ export function cargarCarrito() {
     actualizarCarrito();
   }
 }
+
+// Exponer funciones para que funcionen los onclick en el HTML
+window.cambiarCantidad = cambiarCantidad;
+window.quitarDelCarrito = quitarDelCarrito;
+
 
