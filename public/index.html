@@ -5,7 +5,58 @@
   <title>TucuShop</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Estilos para el carrito flotante */
+    :root {
+      --primary-color: #00cc99;
+      --secondary-color: #1a1a1a;
+      --highlight: #00e6ac;
+      --text-color: #fff;
+    }
+
+    body {
+      background: var(--secondary-color);
+      color: var(--text-color);
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0 10px;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary-color);
+    }
+
+    .filtros, .reseñas {
+      margin-bottom: 20px;
+    }
+
+    input, select {
+      padding: 8px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+      width: 48%;
+    }
+
+    .productos.grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .toggle-tema {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 2000;
+      background: var(--primary-color);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Carrito flotante + panel */
     #btnCarrito {
       position: fixed;
       bottom: 20px;
@@ -25,9 +76,11 @@
       justify-content: center;
       transition: background 0.3s;
     }
+
     #btnCarrito:hover {
       background: var(--highlight);
     }
+
     #panelCarrito {
       display: none;
       position: fixed;
@@ -43,11 +96,13 @@
       overflow-y: auto;
       z-index: 1000;
     }
+
     #panelCarrito h3 {
       margin-top: 0;
       text-align: center;
       color: var(--highlight);
     }
+
     #cerrarPanel {
       position: absolute;
       top: 8px;
@@ -58,6 +113,7 @@
       color: var(--highlight);
       cursor: pointer;
     }
+
     #listaCarrito {
       list-style: none;
       padding-left: 0;
@@ -65,6 +121,7 @@
       overflow-y: auto;
       margin-bottom: 10px;
     }
+
     #listaCarrito li {
       margin-bottom: 8px;
       font-size: 14px;
@@ -74,10 +131,12 @@
       gap: 6px;
       flex-wrap: wrap;
     }
+
     #listaCarrito li span {
       flex: 1 1 auto;
       min-width: 0;
     }
+
     #listaCarrito li button {
       font-size: 14px;
       padding: 2px 8px;
@@ -87,24 +146,30 @@
       transition: opacity 0.2s;
       flex: 0 0 auto;
     }
+
     .btn-cantidad {
       background: #00cc99;
       color: white;
     }
+
     .btn-cantidad:hover {
       opacity: 0.8;
     }
+
     .btn-quitar {
       background: #ff4444;
       color: white;
     }
+
     .btn-quitar:hover {
       opacity: 0.8;
     }
+
     #panelCarrito p strong {
       display: inline-block;
       margin-right: 5px;
     }
+
     #panelCarrito button[onclick="enviarCarritoWhatsApp()"],
     #panelCarrito button[onclick="simularPago()"] {
       width: 100%;
@@ -118,6 +183,7 @@
       cursor: pointer;
       transition: background 0.3s;
     }
+
     #panelCarrito button[onclick="enviarCarritoWhatsApp()"]:hover,
     #panelCarrito button[onclick="simularPago()"]:hover {
       background: var(--highlight);
@@ -128,7 +194,7 @@
   <button class="toggle-tema" onclick="alternarTema()">🌗 Modo Claro/Oscuro</button>
   <h1>🛍️🛍️ TucuShop</h1>
 
-  <!-- 🗣️ Reseñas de usuarios -->
+  <!-- Reseñas -->
   <div class="reseñas" id="reseñas">
     <h2>🗣️ Opiniones de nuestros usuarios</h2>
     <ul>
@@ -143,7 +209,7 @@
     </p>
   </div>
 
-  <!-- 🔍 Filtros -->
+  <!-- Filtros -->
   <div class="filtros">
     <input type="text" id="busqueda" placeholder="Buscar productos..." oninput="filtrarProductos()" />
     <select id="categoria" onchange="filtrarProductos()">
@@ -158,10 +224,9 @@
     </select>
   </div>
 
-  <!-- Botón flotante para abrir/cerrar carrito -->
+  <!-- Carrito -->
   <button id="btnCarrito" title="Abrir carrito">🛒 <span id="contadorCarrito" style="font-weight:bold; font-size:14px; margin-left:4px;">0</span></button>
 
-  <!-- Panel flotante del carrito -->
   <div id="panelCarrito" aria-label="Carrito de compras" role="dialog" aria-modal="true" tabindex="-1">
     <button id="cerrarPanel" aria-label="Cerrar carrito">×</button>
     <h3>🛒 Tu carrito</h3>
@@ -171,17 +236,16 @@
     <button onclick="simularPago()" style="margin-top:10px;">💳 Simular Pago QR</button>
   </div>
 
-  <!-- 🛍️ Productos -->
+  <!-- Productos -->
   <div class="productos grid" id="productos"></div>
 
-  <!-- 🔔 Notificación flotante -->
+  <!-- Notificación -->
   <div id="notificacion" style="display:none;"></div>
 
-  <!-- 🧠 Scripts -->
+  <!-- Scripts -->
   <script src="helpers.js"></script>
   <script src="tema.js"></script>
 
-  <!-- 🌐 Scripts modulares -->
   <script type="module">
     import { agregarAlCarrito, cargarCarrito, cambiarCantidad, quitarDelCarrito, actualizarCarrito, carrito } from './tienda.cmds/carrito.js';
     import { mostrarProductos, filtrarProductos } from './tienda.cmds/productos.js';
@@ -190,20 +254,18 @@
 
     let productos = [];
 
-    // Exponer funciones necesarias
+    // Exponer funciones globales
     window.agregarAlCarrito = agregarAlCarrito;
     window.enviarCarritoWhatsApp = enviarCarritoWhatsApp;
     window.simularPago = simularPago;
     window.cambiarCantidad = cambiarCantidad;
     window.quitarDelCarrito = quitarDelCarrito;
 
-    // Filtro corregido
     function filtrarYMostrar() {
       filtrarProductos(productos, agregarAlCarrito);
     }
     window.filtrarProductos = filtrarYMostrar;
 
-    // Carrito UI
     const btnCarrito = document.getElementById('btnCarrito');
     const panelCarrito = document.getElementById('panelCarrito');
     const cerrarPanel = document.getElementById('cerrarPanel');
@@ -219,19 +281,14 @@
       btnCarrito.title = "Abrir carrito";
     });
 
-    function actualizarContador() {
-      const totalCantidad = carrito.reduce((acc, item) => acc + item.cantidad, 0);
-      contadorCarrito.textContent = totalCantidad;
-    }
-
     const actualizarCarritoOriginal = actualizarCarrito;
     actualizarCarrito = () => {
       actualizarCarritoOriginal();
-      actualizarContador();
+      const totalCantidad = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+      contadorCarrito.textContent = totalCantidad;
     };
     window.actualizarCarrito = actualizarCarrito;
 
-    // Carga inicial
     window.onload = async () => {
       try {
         const res = await fetch('https://tienda-shelby.onrender.com/productos');
@@ -240,7 +297,7 @@
         console.log("📦 Productos cargados:", productos);
         mostrarProductos(productos, agregarAlCarrito);
         cargarCarrito();
-        actualizarContador();
+        actualizarCarrito();
       } catch (err) {
         alert("❌ No se pudieron cargar los productos.");
         console.error(err);
@@ -249,6 +306,7 @@
   </script>
 </body>
 </html>
+
 
 
 
