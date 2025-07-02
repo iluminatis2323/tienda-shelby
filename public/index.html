@@ -39,9 +39,13 @@
     </select>
   </div>
 
-  <!-- 🛒 Carrito -->
-  <div class="carrito">
-    <h2>🛒 Carrito</h2>
+  <!-- Botón flotante para abrir/cerrar carrito -->
+  <button id="btnCarrito" title="Abrir carrito">🛒</button>
+
+  <!-- Panel flotante del carrito -->
+  <div id="panelCarrito" aria-label="Carrito de compras" role="dialog" aria-modal="true" tabindex="-1">
+    <button id="cerrarPanel" aria-label="Cerrar carrito">×</button>
+    <h3>🛒 Tu carrito</h3>
     <ul id="listaCarrito"></ul>
     <p><strong>Total:</strong> $<span id="totalCarrito">0</span></p>
     <button onclick="enviarCarritoWhatsApp()">📲 Solicitar carrito por WhatsApp</button>
@@ -60,18 +64,40 @@
 
   <!-- 🌐 Scripts modulares -->
   <script type="module">
-    import { agregarAlCarrito, cargarCarrito } from './tienda.cmds/carrito.js';
+    import { agregarAlCarrito, cargarCarrito, cambiarCantidad, quitarDelCarrito, actualizarCarrito } from './tienda.cmds/carrito.js';
     import { mostrarProductos, filtrarProductos } from './tienda.cmds/productos.js';
     import { enviarCarritoWhatsApp } from './tienda.cmds/whatsapp.js';
     import { simularPago } from './tienda.cmds/simulador.js';
 
-    // Exponer funciones globales para los botones inline
     window.agregarAlCarrito = agregarAlCarrito;
     window.enviarCarritoWhatsApp = enviarCarritoWhatsApp;
     window.simularPago = simularPago;
     window.filtrarProductos = () => filtrarProductos(productos, agregarAlCarrito);
+    window.cambiarCantidad = cambiarCantidad;
+    window.quitarDelCarrito = quitarDelCarrito;
 
     let productos = [];
+
+    // Control para abrir/cerrar el carrito flotante
+    const btnCarrito = document.getElementById('btnCarrito');
+    const panelCarrito = document.getElementById('panelCarrito');
+    const cerrarPanel = document.getElementById('cerrarPanel');
+
+    btnCarrito.addEventListener('click', () => {
+      if (panelCarrito.style.display === 'block') {
+        panelCarrito.style.display = 'none';
+        btnCarrito.title = "Abrir carrito";
+      } else {
+        panelCarrito.style.display = 'block';
+        panelCarrito.focus();
+        btnCarrito.title = "Cerrar carrito";
+      }
+    });
+
+    cerrarPanel.addEventListener('click', () => {
+      panelCarrito.style.display = 'none';
+      btnCarrito.title = "Abrir carrito";
+    });
 
     window.onload = async () => {
       try {
@@ -88,6 +114,7 @@
   </script>
 </body>
 </html>
+
 
 
 
