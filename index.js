@@ -3,42 +3,46 @@ const fs = require('fs');
 const path = require('path');
 const app = express();
 
-// En Render o Heroku, el puerto lo da la variable de entorno PORT,
-// si no está definida, usamos 3000 para desarrollo local
+// Si estás en Render o Heroku, usá el puerto asignado por el entorno
 const PORT = process.env.PORT || 3000;
 
-// Middleware para leer JSON desde el cliente
+// Middleware para leer JSON desde el cliente (POST)
 app.use(express.json());
 
-// CORS para que AppCreator24 u otros clientes puedan acceder
+// Middleware CORS para permitir acceso desde cualquier origen (AppCreator24, etc)
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
 
-// Ruta para obtener los productos desde productos.json
+// Ruta: Obtener productos desde productos.json
 app.get('/productos', (req, res) => {
   const productosPath = path.join(__dirname, 'productos.json');
   fs.readFile(productosPath, 'utf8', (err, data) => {
     if (err) {
-      console.error("Error al leer productos:", err);
+      console.error("❌ Error al leer productos:", err);
       return res.status(500).json({ error: "Error al leer los productos" });
     }
     res.send(JSON.parse(data));
   });
 });
 
-// Ruta para recibir pedidos
+// Ruta: Recibir pedido (cliente hizo clic en simular pago)
 app.post('/pedido', (req, res) => {
   const pedido = req.body;
   console.log("📦 Pedido recibido:", pedido);
 
-  // Aquí luego lo conectamos con Telegram o base de datos
+  // 🔗 Aquí podés enviar el pedido por Telegram al comerciante correspondiente
+
   res.json({ mensaje: "Pedido recibido correctamente ✅" });
 });
 
-// Iniciar el servidor en el puerto correcto (Render asigna el puerto dinámicamente)
+// 🚀 Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en el puerto ${PORT}`);
+  console.log(`✅ Servidor corriendo en el puerto ${PORT}`);
 });
+
+// 📢 IMPORTANTE: Ejecutar el bot de Telegram al mismo tiempo
+require('./bot.js');
+
