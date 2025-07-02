@@ -1,47 +1,36 @@
 let productos = [];
 let carrito = [];
 
-async function cargarProductos() {
-  try {
-    const res = await fetch('https://tienda-shelby.onrender.com/productos');
-    productos = await res.json();
-
-    console.log("📦 Productos cargados:", productos); // DEBUG
-
-    mostrarProductos();
-    cargarCarrito();
-  } catch (err) {
-    alert("❌ No se pudieron cargar los productos.");
-    console.error(err);
-  }
+// 🎯 Utilidad para normalizar un producto
+function formatearProducto(p) {
+  return {
+    nombre: p.nombre || "Producto sin nombre",
+    precio: p.precio || 0,
+    imagen: p.imagen || "https://via.placeholder.com/300x180?text=Sin+Imagen",
+    envio: p.envio ? '🚚 Envío' : '',
+    oferta: p.oferta ? '🏷️ Oferta' : '',
+    cuotas: p.cuotas ? '💳 Cuotas' : ''
+  };
 }
 
+// 🧩 Renderizar productos
 function mostrarProductos() {
   const contenedor = document.getElementById("productos");
-  contenedor.innerHTML = "";
-
-  productos.forEach((p, i) => {
-    // Validaciones para evitar undefined
-    const nombre = p.nombre || "Producto sin nombre";
-    const precio = p.precio || 0;
-    const imagen = p.imagen || "https://via.placeholder.com/300x180?text=Sin+Imagen";
-    const envio = p.envio ? '🚚 Envío' : '';
-    const oferta = p.oferta ? '🏷️ Oferta' : '';
-    const cuotas = p.cuotas ? '💳 Cuotas' : '';
-
-    contenedor.innerHTML += `
+  contenedor.innerHTML = productos.map((p) => {
+    const { nombre, precio, imagen, envio, oferta, cuotas } = formatearProducto(p);
+    return `
       <div class="card">
         <img src="${imagen}" alt="${nombre}" />
         <h3>${nombre}</h3>
-        <p><strong>Contado:</strong> $${precio}</p>
-        <p><strong>4 cuotas:</strong> $${(precio * 1.4).toFixed(0)}</p>
+        <p><strong>Contado:</strong> $${precio.toLocaleString('es-AR')}</p>
+        <p><strong>4 cuotas:</strong> $${(precio * 1.4).toFixed(0).toLocaleString('es-AR')}</p>
         <p>${envio} ${oferta} ${cuotas}</p>
         <button class="comprar" onclick="agregarAlCarrito('${nombre}', ${precio})">Agregar al carrito</button>
         <a href="https://wa.me/5493813885182?text=Hola! Quiero este producto: ${encodeURIComponent(nombre)}" target="_blank">
           <button class="comprar">Solicitar por WhatsApp</button>
         </a>
       </div>`;
-  });
+  }).join('');
 }
 
 function filtrarProductos() {
@@ -54,29 +43,21 @@ function filtrarProductos() {
   );
 
   const contenedor = document.getElementById("productos");
-  contenedor.innerHTML = "";
-
-  filtrados.forEach((p, i) => {
-    const nombre = p.nombre || "Producto sin nombre";
-    const precio = p.precio || 0;
-    const imagen = p.imagen || "https://via.placeholder.com/300x180?text=Sin+Imagen";
-    const envio = p.envio ? '🚚 Envío' : '';
-    const oferta = p.oferta ? '🏷️ Oferta' : '';
-    const cuotas = p.cuotas ? '💳 Cuotas' : '';
-
-    contenedor.innerHTML += `
+  contenedor.innerHTML = filtrados.map((p) => {
+    const { nombre, precio, imagen, envio, oferta, cuotas } = formatearProducto(p);
+    return `
       <div class="card">
         <img src="${imagen}" alt="${nombre}" />
         <h3>${nombre}</h3>
-        <p><strong>Contado:</strong> $${precio}</p>
-        <p><strong>4 cuotas:</strong> $${(precio * 1.4).toFixed(0)}</p>
+        <p><strong>Contado:</strong> $${precio.toLocaleString('es-AR')}</p>
+        <p><strong>4 cuotas:</strong> $${(precio * 1.4).toFixed(0).toLocaleString('es-AR')}</p>
         <p>${envio} ${oferta} ${cuotas}</p>
         <button class="comprar" onclick="agregarAlCarrito('${nombre}', ${precio})">Agregar al carrito</button>
         <a href="https://wa.me/5493813885182?text=Hola! Quiero este producto: ${encodeURIComponent(nombre)}" target="_blank">
           <button class="comprar">Solicitar por WhatsApp</button>
         </a>
       </div>`;
-  });
+  }).join('');
 }
 
 function agregarAlCarrito(nombre, precio) {
@@ -118,7 +99,7 @@ function actualizarCarrito() {
   carrito.forEach(p => {
     lista.innerHTML += `
       <li>
-        ${p.nombre} - $${p.precio} x ${p.cantidad} = $${p.precio * p.cantidad}
+        ${p.nombre} - $${p.precio} x ${p.cantidad} = $${(p.precio * p.cantidad).toLocaleString('es-AR')}
         <button class="btn-cantidad" onclick="cambiarCantidad('${p.nombre}', 1)">+</button>
         <button class="btn-cantidad" onclick="cambiarCantidad('${p.nombre}', -1)">-</button>
         <button class="btn-quitar" onclick="quitarDelCarrito('${p.nombre}')">❌</button>
@@ -126,7 +107,7 @@ function actualizarCarrito() {
     suma += p.precio * p.cantidad;
   });
 
-  total.textContent = suma;
+  total.textContent = suma.toLocaleString('es-AR');
 }
 
 function guardarCarrito() {
@@ -156,8 +137,10 @@ function enviarCarritoWhatsApp() {
 function simularPago() {
   if (carrito.length === 0) return alert("🛒 El carrito está vacío");
 
-  const cliente = prompt("📞 Ingresá tu nombre o número de WhatsApp:");
+  let cliente = localStorage.getItem("clienteNombre") || prompt("📞 Ingresá tu nombre o número de WhatsApp:");
   if (!cliente || cliente.trim() === "") return alert("⚠️ Debes ingresar un nombre o número");
+
+  localStorage.setItem("clienteNombre", cliente);
 
   fetch('https://tienda-shelby.onrender.com/pedido', {
     method: 'POST',
@@ -169,5 +152,25 @@ function simularPago() {
   .catch(() => alert("❌ Error al enviar el pedido al servidor"));
 }
 
-window.onload = cargarProductos;
+function mostrarNotificacion(msg) {
+  const n = document.getElementById("notificacion");
+  n.textContent = msg;
+  n.style.display = "block";
+  setTimeout(() => n.style.display = "none", 2000);
+}
+
+// 🚀 Cargar productos al iniciar
+window.onload = async () => {
+  try {
+    const res = await fetch('https://tienda-shelby.onrender.com/productos');
+    productos = await res.json();
+    console.log("📦 Productos cargados:", productos);
+    mostrarProductos();
+    cargarCarrito();
+  } catch (err) {
+    alert("❌ No se pudieron cargar los productos.");
+    console.error(err);
+  }
+};
+
 
