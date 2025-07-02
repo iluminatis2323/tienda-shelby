@@ -1,9 +1,10 @@
+require('dotenv').config();  // Cargar las variables de entorno desde .env
 const { Telegraf, Scenes, session, Markup } = require('telegraf');
 const fs = require('fs');
 const path = require('path');
 
-// ✅ Token del bot
-const bot = new Telegraf('7317600622:AAFPhQ3ggoHl2tq-G_v6O132FxCjvdvKmhM');
+// ✅ Token del bot desde la variable de entorno
+const bot = new Telegraf(process.env.BOT_TOKEN);
 const ADMIN_ID = 6500959070;
 
 // ✅ Archivos
