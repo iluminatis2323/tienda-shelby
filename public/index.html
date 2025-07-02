@@ -134,12 +134,14 @@
 
     async function cargarProductos() {
       try {
-        const res = await fetch('/productos');
+        // ¡Atención! Usamos la URL pública completa de Render:
+        const res = await fetch('https://tienda-shelby.onrender.com/productos');
         productos = await res.json();
         mostrarProductos();
         cargarCarrito();
       } catch (err) {
         alert("❌ No se pudieron cargar los productos.");
+        console.error(err);
       }
     }
 
@@ -265,7 +267,7 @@
     }
 
     function simularPago() {
-      fetch('/pedido', {
+      fetch('https://tienda-shelby.onrender.com/pedido', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ carrito })
