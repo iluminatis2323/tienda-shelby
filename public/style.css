@@ -35,7 +35,8 @@ h1, h2 {
 }
 
 /* 🔍 Filtros de búsqueda */
-.filtros input, .filtros select {
+.filtros input,
+.filtros select {
   padding: 10px;
   margin: 5px;
   border-radius: 5px;
@@ -70,29 +71,39 @@ h1, h2 {
   box-shadow: 0 0 8px var(--highlight);
   transition: transform 0.2s, box-shadow 0.2s;
 }
-
 .card:hover {
   transform: scale(1.02);
   box-shadow: 0 0 12px var(--highlight);
 }
-
 .card img {
   width: 100%;
   border-radius: 5px;
   height: 130px;
   object-fit: cover;
 }
-
 .card h3 {
   font-size: 16px;
 }
-
 .card p {
   font-size: 14px;
 }
-
 .card button {
   font-size: 14px;
+}
+
+/* 🛍️ Animación de aparición */
+.card.animada {
+  animation: aparecer 0.4s ease-in-out;
+}
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* 🔘 Botones generales */
@@ -103,16 +114,28 @@ h1, h2 {
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.2s;
 }
-
 .comprar {
   background: var(--primary-color);
   color: white;
 }
 
+/* ✨ Efectos en botones especiales */
+.efecto-boton:hover {
+  background: var(--highlight);
+  box-shadow: 0 0 10px var(--highlight);
+  transform: scale(1.05);
+}
+.efecto-wsp:hover {
+  background: #25D366;
+  box-shadow: 0 0 12px #25D366;
+  transform: scale(1.05);
+}
+
 /* 🛠️ Botones de carrito */
-.btn-quitar, .btn-cantidad {
+.btn-quitar,
+.btn-cantidad {
   background: #ff4444;
   color: white;
   padding: 2px 8px;
@@ -120,10 +143,14 @@ h1, h2 {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 14px;
 }
-
 .btn-cantidad {
   background: #00cc99;
+}
+.btn-cantidad:hover,
+.btn-quitar:hover {
+  opacity: 0.85;
 }
 
 /* 🛒 Carrito */
@@ -148,6 +175,10 @@ h1, h2 {
   cursor: pointer;
   z-index: 1000;
   font-size: 14px;
+  transition: background 0.2s;
+}
+.toggle-tema:hover {
+  background: var(--highlight);
 }
 
 /* 🔔 Notificación flotante */
@@ -162,6 +193,7 @@ h1, h2 {
   border-radius: 8px;
   display: none;
   box-shadow: 0 0 10px var(--highlight);
+  transition: all 0.3s ease-in-out;
 }
 
 /* 👁️ Accesibilidad */
@@ -169,7 +201,7 @@ button:focus {
   outline: 2px solid var(--highlight);
 }
 
-/* 🎚️ Scroll personalizado (opcional) */
+/* 🎚️ Scroll personalizado */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -203,5 +235,6 @@ button:focus {
   font-size: 14px;
   margin-top: 12px;
 }
+
 
 
