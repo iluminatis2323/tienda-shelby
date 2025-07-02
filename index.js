@@ -3,20 +3,23 @@ const fs = require('fs');
 const path = require('path');
 const app = express();
 
-// Si estás en Render o Heroku, usá el puerto asignado por el entorno
+// Puerto dinámico para Render o 3000 para desarrollo local
 const PORT = process.env.PORT || 3000;
 
-// Middleware para leer JSON desde el cliente (POST)
+// Middleware para recibir JSON
 app.use(express.json());
 
-// Middleware CORS para permitir acceso desde cualquier origen (AppCreator24, etc)
+// CORS: permitir acceso desde cualquier origen
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
 
-// Ruta: Obtener productos desde productos.json
+// Servir archivos estáticos desde /public (por ejemplo, index.html si lo usás)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Ruta: obtener productos
 app.get('/productos', (req, res) => {
   const productosPath = path.join(__dirname, 'productos.json');
   fs.readFile(productosPath, 'utf8', (err, data) => {
@@ -28,21 +31,22 @@ app.get('/productos', (req, res) => {
   });
 });
 
-// Ruta: Recibir pedido (cliente hizo clic en simular pago)
+// Ruta: recibir pedido
 app.post('/pedido', (req, res) => {
   const pedido = req.body;
   console.log("📦 Pedido recibido:", pedido);
 
-  // 🔗 Aquí podés enviar el pedido por Telegram al comerciante correspondiente
+  // 👉 Aquí podrías notificar por Telegram al comerciante correspondiente
 
   res.json({ mensaje: "Pedido recibido correctamente ✅" });
 });
 
-// 🚀 Iniciar servidor
+// Iniciar servidor
 app.listen(PORT, () => {
   console.log(`✅ Servidor corriendo en el puerto ${PORT}`);
 });
 
-// 📢 IMPORTANTE: Ejecutar el bot de Telegram al mismo tiempo
+// Ejecutar el bot de Telegram automáticamente
 require('./bot.js');
+
 
