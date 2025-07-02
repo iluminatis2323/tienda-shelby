@@ -143,4 +143,8 @@ bot.use(session());
 bot.use(stage.middleware());
 bot.command('subir', (ctx) => ctx.scene.enter('subir-producto'));
 
+// ⏯️ Iniciar el bot
 bot.launch();
+
+// ✅ Exportar el bot para usarlo desde index.js
+module.exports = { bot };

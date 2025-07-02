@@ -134,14 +134,12 @@
 
     async function cargarProductos() {
       try {
-        // ¡Atención! Usamos la URL pública completa de Render:
         const res = await fetch('https://tienda-shelby.onrender.com/productos');
         productos = await res.json();
         mostrarProductos();
         cargarCarrito();
       } catch (err) {
         alert("❌ No se pudieron cargar los productos.");
-        console.error(err);
       }
     }
 
@@ -266,14 +264,21 @@
       window.open(`https://wa.me/5493813885182?text=${mensaje}`, '_blank');
     }
 
+    // ✅ FUNCIÓN CORREGIDA: ahora incluye nombre del cliente
     function simularPago() {
+      if (carrito.length === 0) return alert("🛒 El carrito está vacío");
+
+      const cliente = prompt("📞 Ingresá tu nombre o número de WhatsApp:");
+      if (!cliente || cliente.trim() === "") return alert("⚠️ Debes ingresar un nombre o número");
+
       fetch('https://tienda-shelby.onrender.com/pedido', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ carrito })
-      }).then(res => res.json())
-        .then(data => alert("✅ Pedido enviado al servidor.\n" + data.mensaje))
-        .catch(() => alert("❌ Error al enviar pedido"));
+        body: JSON.stringify({ carrito, cliente })
+      })
+      .then(res => res.json())
+      .then(data => alert("✅ Pedido enviado correctamente.\n" + data.mensaje))
+      .catch(() => alert("❌ Error al enviar el pedido al servidor"));
     }
 
     function alternarTema() {
