@@ -1,0 +1,167 @@
+/* 🌗 Modo claro automático si el sistema lo prefiere */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-color: #f2f2f2;
+    --text-color: #000;
+    --primary-color: #007755;
+    --secondary-color: #ddd;
+    --highlight: #00aa77;
+  }
+}
+
+/* 🎨 Variables por defecto (modo oscuro) */
+:root {
+  --bg-color: #000;
+  --text-color: white;
+  --primary-color: #00cc99;
+  --secondary-color: #1f1f1f;
+  --highlight: #00ffcc;
+  transition: all 0.3s ease-in-out;
+}
+
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Arial', sans-serif;
+  padding: 10px;
+  margin: 0;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* 🎯 Títulos */
+h1, h2 {
+  color: var(--highlight);
+  text-align: center;
+}
+
+/* 🔍 Filtros de búsqueda */
+.filtros input, .filtros select {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 5px;
+  border: none;
+  font-size: 16px;
+  width: 100%;
+  max-width: 400px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 🛍️ Productos en grilla */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* 📱 Versión responsive */
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 🧾 Tarjetas */
+.card {
+  background: var(--secondary-color);
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 8px var(--highlight);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 12px var(--highlight);
+}
+
+.card img {
+  width: 100%;
+  border-radius: 5px;
+  height: 180px;
+  object-fit: cover;
+}
+
+/* 🔘 Botones */
+.btn {
+  padding: 10px;
+  width: 100%;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.comprar {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-quitar, .btn-cantidad {
+  background: #ff4444;
+  color: white;
+  padding: 2px 8px;
+  margin-left: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-cantidad {
+  background: #00cc99;
+}
+
+/* 🛒 Carrito */
+.carrito {
+  background: #111;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 5px var(--highlight);
+}
+
+/* 🌗 Botón de tema */
+.toggle-tema {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1000;
+  font-size: 14px;
+}
+
+/* 🔔 Notificación flotante */
+#notificacion {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-color);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  display: none;
+  box-shadow: 0 0 10px var(--highlight);
+}
+
+/* 👁️ Accesibilidad */
+button:focus {
+  outline: 2px solid var(--highlight);
+}
+
+/* 🎚️ Scroll personalizado (opcional) */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--highlight);
+  border-radius: 10px;
+}
+
