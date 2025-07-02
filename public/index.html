@@ -7,8 +7,24 @@
 </head>
 <body>
   <button class="toggle-tema" onclick="alternarTema()">🌗 Modo Claro/Oscuro</button>
-  <h1>🛍️ TucuShop</h1>
+  <h1>🛍️🛍️ TucuShop</h1>
 
+  <!-- 🗣️ Reseñas de usuarios -->
+  <div class="reseñas" id="reseñas">
+    <h2>🗣️ Opiniones de nuestros usuarios</h2>
+    <ul>
+      <li>⭐️⭐️⭐️⭐️⭐️ “La aplicación es excelente para ofrecer mis productos, muy intuitiva.” – Carla (comerciante)</li>
+      <li>⭐️⭐️⭐️⭐️ “Funciona muy bien, aunque se me trabó una vez, igual recomiendo.” – Pablo (vendedor)</li>
+      <li>⭐️⭐️⭐️⭐️⭐️ “Gracias a TucuShop, empecé a vender mis manualidades sin pagar comisiones.” – Florencia</li>
+      <li>⭐️⭐️⭐️ “Está buena pero estaría genial poder agregar más fotos por producto.” – Juan</li>
+      <li>⭐️⭐️⭐️⭐️⭐️ “Me encantó, fácil de usar y me conectó con muchos compradores.” – Nati</li>
+    </ul>
+    <p style="text-align:center; margin-top: 10px;">
+      <strong>📢 Esta app está pensada para comerciantes pequeños, feriantes, emprendedores y servicios locales.</strong>
+    </p>
+  </div>
+
+  <!-- 🔍 Filtros -->
   <div class="filtros">
     <input type="text" id="busqueda" placeholder="Buscar productos..." oninput="filtrarProductos()" />
     <select id="categoria" onchange="filtrarProductos()">
@@ -23,6 +39,7 @@
     </select>
   </div>
 
+  <!-- 🛒 Carrito -->
   <div class="carrito">
     <h2>🛒 Carrito</h2>
     <ul id="listaCarrito"></ul>
@@ -31,14 +48,19 @@
     <button onclick="simularPago()" style="margin-top:10px;">💳 Simular Pago QR</button>
   </div>
 
+  <!-- 🛍️ Productos -->
   <div class="productos grid" id="productos"></div>
+
+  <!-- 🔔 Notificación flotante -->
   <div id="notificacion"></div>
 
+  <!-- 🧠 Scripts -->
   <script src="helpers.js"></script>
   <script src="tema.js"></script>
   <script src="tienda.js"></script>
 </body>
 </html>
+
 
 
 

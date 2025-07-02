@@ -62,7 +62,7 @@ h1, h2 {
   }
 }
 
-/* 🧾 Tarjetas */
+/* 🧾 Tarjetas de producto */
 .card {
   background: var(--secondary-color);
   padding: 10px;
@@ -79,11 +79,23 @@ h1, h2 {
 .card img {
   width: 100%;
   border-radius: 5px;
-  height: 180px;
+  height: 130px;
   object-fit: cover;
 }
 
-/* 🔘 Botones */
+.card h3 {
+  font-size: 16px;
+}
+
+.card p {
+  font-size: 14px;
+}
+
+.card button {
+  font-size: 14px;
+}
+
+/* 🔘 Botones generales */
 .btn {
   padding: 10px;
   width: 100%;
@@ -99,6 +111,7 @@ h1, h2 {
   color: white;
 }
 
+/* 🛠️ Botones de carrito */
 .btn-quitar, .btn-cantidad {
   background: #ff4444;
   color: white;
@@ -164,4 +177,31 @@ button:focus {
   background: var(--highlight);
   border-radius: 10px;
 }
+
+/* 🗣️ Sección de reseñas */
+.reseñas {
+  background: var(--secondary-color);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 8px var(--highlight);
+}
+.reseñas h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.reseñas ul {
+  list-style: none;
+  padding-left: 0;
+}
+.reseñas li {
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.reseñas p {
+  font-size: 14px;
+  margin-top: 12px;
+}
+
 
