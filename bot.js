@@ -6,7 +6,7 @@ const path = require('path');
 const bot = new Telegraf('7317600622:AAFPhQ3ggoHl2tq-G_v6O132FxCjvdvKmhM');
 
 // ✅ ID del dueño (vos)
-const ADMIN_ID = TU_ID_AQUI; // <-- lo reemplazamos ahora
+const ADMIN_ID = 6500959070; // <-- lo reemplazamos ahora
 
 // ✅ Archivo de comerciantes
 const COMERCIANTES_FILE = path.join(__dirname, 'comerciantes.json');
