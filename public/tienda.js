@@ -5,26 +5,39 @@ async function cargarProductos() {
   try {
     const res = await fetch('https://tienda-shelby.onrender.com/productos');
     productos = await res.json();
+
+    console.log("📦 Productos cargados:", productos); // DEBUG
+
     mostrarProductos();
     cargarCarrito();
   } catch (err) {
     alert("❌ No se pudieron cargar los productos.");
+    console.error(err);
   }
 }
 
 function mostrarProductos() {
   const contenedor = document.getElementById("productos");
   contenedor.innerHTML = "";
+
   productos.forEach((p, i) => {
+    // Validaciones para evitar undefined
+    const nombre = p.nombre || "Producto sin nombre";
+    const precio = p.precio || 0;
+    const imagen = p.imagen || "https://via.placeholder.com/300x180?text=Sin+Imagen";
+    const envio = p.envio ? '🚚 Envío' : '';
+    const oferta = p.oferta ? '🏷️ Oferta' : '';
+    const cuotas = p.cuotas ? '💳 Cuotas' : '';
+
     contenedor.innerHTML += `
       <div class="card">
-        <img src="${p.imagen}" alt="${p.nombre}" />
-        <h3>${p.nombre}</h3>
-        <p><strong>Contado:</strong> $${p.precio}</p>
-        <p><strong>4 cuotas:</strong> $${(p.precio * 1.4).toFixed(0)}</p>
-        <p>${p.envio ? '🚚 Envío' : ''} ${p.oferta ? '🏷️ Oferta' : ''} ${p.cuotas ? '💳 Cuotas' : ''}</p>
-        <button class="comprar" onclick="agregarAlCarrito('${p.nombre}', ${p.precio})">Agregar al carrito</button>
-        <a href="https://wa.me/5493813885182?text=Hola! Quiero este producto: ${encodeURIComponent(p.nombre)}" target="_blank">
+        <img src="${imagen}" alt="${nombre}" />
+        <h3>${nombre}</h3>
+        <p><strong>Contado:</strong> $${precio}</p>
+        <p><strong>4 cuotas:</strong> $${(precio * 1.4).toFixed(0)}</p>
+        <p>${envio} ${oferta} ${cuotas}</p>
+        <button class="comprar" onclick="agregarAlCarrito('${nombre}', ${precio})">Agregar al carrito</button>
+        <a href="https://wa.me/5493813885182?text=Hola! Quiero este producto: ${encodeURIComponent(nombre)}" target="_blank">
           <button class="comprar">Solicitar por WhatsApp</button>
         </a>
       </div>`;
@@ -34,22 +47,32 @@ function mostrarProductos() {
 function filtrarProductos() {
   const texto = document.getElementById("busqueda").value.toLowerCase();
   const cat = document.getElementById("categoria").value;
+
   const filtrados = productos.filter(p =>
-    p.nombre.toLowerCase().includes(texto) &&
+    (p.nombre || "").toLowerCase().includes(texto) &&
     (!cat || p.categoria === cat)
   );
+
   const contenedor = document.getElementById("productos");
   contenedor.innerHTML = "";
+
   filtrados.forEach((p, i) => {
+    const nombre = p.nombre || "Producto sin nombre";
+    const precio = p.precio || 0;
+    const imagen = p.imagen || "https://via.placeholder.com/300x180?text=Sin+Imagen";
+    const envio = p.envio ? '🚚 Envío' : '';
+    const oferta = p.oferta ? '🏷️ Oferta' : '';
+    const cuotas = p.cuotas ? '💳 Cuotas' : '';
+
     contenedor.innerHTML += `
       <div class="card">
-        <img src="${p.imagen}" alt="${p.nombre}" />
-        <h3>${p.nombre}</h3>
-        <p><strong>Contado:</strong> $${p.precio}</p>
-        <p><strong>4 cuotas:</strong> $${(p.precio * 1.4).toFixed(0)}</p>
-        <p>${p.envio ? '🚚 Envío' : ''} ${p.oferta ? '🏷️ Oferta' : ''} ${p.cuotas ? '💳 Cuotas' : ''}</p>
-        <button class="comprar" onclick="agregarAlCarrito('${p.nombre}', ${p.precio})">Agregar al carrito</button>
-        <a href="https://wa.me/5493813885182?text=Hola! Quiero este producto: ${encodeURIComponent(p.nombre)}" target="_blank">
+        <img src="${imagen}" alt="${nombre}" />
+        <h3>${nombre}</h3>
+        <p><strong>Contado:</strong> $${precio}</p>
+        <p><strong>4 cuotas:</strong> $${(precio * 1.4).toFixed(0)}</p>
+        <p>${envio} ${oferta} ${cuotas}</p>
+        <button class="comprar" onclick="agregarAlCarrito('${nombre}', ${precio})">Agregar al carrito</button>
+        <a href="https://wa.me/5493813885182?text=Hola! Quiero este producto: ${encodeURIComponent(nombre)}" target="_blank">
           <button class="comprar">Solicitar por WhatsApp</button>
         </a>
       </div>`;
@@ -91,6 +114,7 @@ function actualizarCarrito() {
   const total = document.getElementById("totalCarrito");
   lista.innerHTML = "";
   let suma = 0;
+
   carrito.forEach(p => {
     lista.innerHTML += `
       <li>
@@ -101,6 +125,7 @@ function actualizarCarrito() {
       </li>`;
     suma += p.precio * p.cantidad;
   });
+
   total.textContent = suma;
 }
 
@@ -118,11 +143,13 @@ function cargarCarrito() {
 
 function enviarCarritoWhatsApp() {
   if (carrito.length === 0) return alert("El carrito está vacío");
+
   let mensaje = "Hola! Quiero estos productos:%0A";
   carrito.forEach(p => {
     mensaje += `- ${p.nombre} x${p.cantidad} ($${p.precio * p.cantidad})%0A`;
   });
   mensaje += `%0ATotal: $${carrito.reduce((a, b) => a + b.precio * b.cantidad, 0)}`;
+
   window.open(`https://wa.me/5493813885182?text=${mensaje}`, '_blank');
 }
 
@@ -143,3 +170,4 @@ function simularPago() {
 }
 
 window.onload = cargarProductos;
+
