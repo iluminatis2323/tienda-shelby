@@ -52,14 +52,43 @@
   <div class="productos grid" id="productos"></div>
 
   <!-- 🔔 Notificación flotante -->
-  <div id="notificacion"></div>
+  <div id="notificacion" style="display:none;"></div>
 
   <!-- 🧠 Scripts -->
-  <script src="helpers.js"></script>
-  <script src="tema.js"></script>
-  <script src="tienda.js"></script>
+  <script src="helpers.js"></script> <!-- si tenés funciones auxiliares -->
+  <script src="tema.js"></script>    <!-- modo claro/oscuro -->
+
+  <!-- 🌐 Scripts modulares -->
+  <script type="module">
+    import { agregarAlCarrito, cargarCarrito } from './tienda.cmds/carrito.js';
+    import { mostrarProductos, filtrarProductos } from './tienda.cmds/productos.js';
+    import { enviarCarritoWhatsApp } from './tienda.cmds/whatsapp.js';
+    import { simularPago } from './tienda.cmds/simulador.js';
+
+    // Exponer funciones globales para los botones inline
+    window.agregarAlCarrito = agregarAlCarrito;
+    window.enviarCarritoWhatsApp = enviarCarritoWhatsApp;
+    window.simularPago = simularPago;
+    window.filtrarProductos = () => filtrarProductos(productos, agregarAlCarrito);
+
+    let productos = [];
+
+    window.onload = async () => {
+      try {
+        const res = await fetch('https://tienda-shelby.onrender.com/productos');
+        productos = await res.json();
+        console.log("📦 Productos cargados:", productos);
+        mostrarProductos(productos, agregarAlCarrito);
+        cargarCarrito();
+      } catch (err) {
+        alert("❌ No se pudieron cargar los productos.");
+        console.error(err);
+      }
+    };
+  </script>
 </body>
 </html>
+
 
 
 
