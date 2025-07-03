@@ -194,7 +194,6 @@
   <button class="toggle-tema" onclick="alternarTema()">🌗 Modo Claro/Oscuro</button>
   <h1>🛍️🛍️ TucuShop</h1>
 
-  <!-- Reseñas -->
   <div class="reseñas" id="reseñas">
     <h2>🗣️ Opiniones de nuestros usuarios</h2>
     <ul>
@@ -209,10 +208,9 @@
     </p>
   </div>
 
-  <!-- Filtros -->
   <div class="filtros">
-    <input type="text" id="busqueda" placeholder="Buscar productos..." oninput="filtrarProductos()" />
-    <select id="categoria" onchange="filtrarProductos()">
+    <input type="text" id="busqueda" placeholder="Buscar productos..." />
+    <select id="categoria">
       <option value="">Todas las categorías</option>
       <option value="prestamos">💸 Préstamos personales</option>
       <option value="celulares">📱 Celulares y accesorios</option>
@@ -224,11 +222,10 @@
     </select>
   </div>
 
-  <!-- Carrito -->
   <button id="btnCarrito" title="Abrir carrito">🛒 <span id="contadorCarrito" style="font-weight:bold; font-size:14px; margin-left:4px;">0</span></button>
 
-  <div id="panelCarrito" aria-label="Carrito de compras" role="dialog" aria-modal="true" tabindex="-1">
-    <button id="cerrarPanel" aria-label="Cerrar carrito">×</button>
+  <div id="panelCarrito">
+    <button id="cerrarPanel">×</button>
     <h3>🛒 Tu carrito</h3>
     <ul id="listaCarrito"></ul>
     <p><strong>Total:</strong> $<span id="totalCarrito">0</span></p>
@@ -236,13 +233,9 @@
     <button onclick="simularPago()" style="margin-top:10px;">💳 Simular Pago QR</button>
   </div>
 
-  <!-- Productos -->
   <div class="productos grid" id="productos"></div>
-
-  <!-- Notificación -->
   <div id="notificacion" style="display:none;"></div>
 
-  <!-- Scripts -->
   <script src="helpers.js"></script>
   <script src="tema.js"></script>
 
@@ -254,17 +247,11 @@
 
     let productos = [];
 
-    // Exponer funciones globales
     window.agregarAlCarrito = agregarAlCarrito;
     window.enviarCarritoWhatsApp = enviarCarritoWhatsApp;
     window.simularPago = simularPago;
     window.cambiarCantidad = cambiarCantidad;
     window.quitarDelCarrito = quitarDelCarrito;
-
-    function filtrarYMostrar() {
-      filtrarProductos(productos, agregarAlCarrito);
-    }
-    window.filtrarProductos = filtrarYMostrar;
 
     const btnCarrito = document.getElementById('btnCarrito');
     const panelCarrito = document.getElementById('panelCarrito');
@@ -298,6 +285,11 @@
         mostrarProductos(productos, agregarAlCarrito);
         cargarCarrito();
         actualizarCarrito();
+
+        // ✅ Ahora sí: conectar eventos de búsqueda después de cargar
+        document.getElementById("busqueda").oninput = () => filtrarProductos(productos, agregarAlCarrito);
+        document.getElementById("categoria").onchange = () => filtrarProductos(productos, agregarAlCarrito);
+
       } catch (err) {
         alert("❌ No se pudieron cargar los productos.");
         console.error(err);
@@ -306,6 +298,7 @@
   </script>
 </body>
 </html>
+
 
 
 
