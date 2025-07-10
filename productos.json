@@ -2,16 +2,16 @@
   {
     "nombre": "Celular Samsung A14",
     "precio": 120000,
-    "imagen": "https://example.com/celular.jpg",
+    "imagen": "https://http2.mlstatic.com/D_NQ_NP_2X_895140-MLA54917979193_042023-F.webp",
     "categoria": "celulares",
     "envio": true,
     "oferta": false,
     "cuotas": true
   },
   {
-    "nombre": "Notebook Lenovo",
+    "nombre": "Notebook Lenovo Ideapad 3",
     "precio": 250000,
-    "imagen": "https://example.com/notebook.jpg",
+    "imagen": "https://http2.mlstatic.com/D_NQ_NP_2X_924157-MLA71711831580_092023-F.webp",
     "categoria": "notebooks",
     "envio": true,
     "oferta": true,
