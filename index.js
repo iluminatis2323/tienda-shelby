@@ -1,25 +1,28 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
 const app = express();
-
-// Puerto dinámico para Render o 3000 en local
 const PORT = process.env.PORT || 3000;
+const IS_RENDER = process.env.RENDER === 'true' || process.env.NODE_ENV === 'production';
 
-// Middleware para recibir JSON
+// Middleware JSON
 app.use(express.json());
 
-// CORS para permitir acceso desde AppCreator24 u otros orígenes
+// CORS para AppCreator24 o frontend externo
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
 
-// Servir archivos estáticos (index.html, tienda.js, etc.) desde /public
+// Archivos estáticos desde /public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ✅ Ruta: obtener productos (¡usamos /api para evitar conflicto con productos.js!)
+// 📦 Ruta: obtener productos
 app.get('/api/productos', (req, res) => {
   const productosPath = path.join(__dirname, 'productos.json');
   fs.readFile(productosPath, 'utf8', (err, data) => {
@@ -31,7 +34,7 @@ app.get('/api/productos', (req, res) => {
   });
 });
 
-// Ruta: recibir pedido desde frontend y notificar al admin
+// 🛒 Ruta: recibir pedido desde frontend y reenviar a Telegram
 app.post('/api/pedido', async (req, res) => {
   const pedido = req.body;
   const cliente = pedido.cliente || "Cliente anónimo";
@@ -52,19 +55,26 @@ app.post('/api/pedido', async (req, res) => {
   }
 });
 
-// Ruta final: para todo lo demás, devolver index.html
+// 🌐 Fallback: servir index.html en rutas no reconocidas
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Iniciar servidor
+// ▶️ Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`✅ Servidor corriendo en el puerto ${PORT}`);
+  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });
 
-// 🔥 IMPORTANTE: Comentá esta línea si hacés pruebas locales con otra instancia
-// Descomentar solo en producción o cuando no estés ejecutando el bot en tu PC
-// require('./bot.js');
+// 🧠 Lógica para activar el bot solo si querés
+if (!IS_RENDER) {
+  try {
+    const { bot } = require('./bot.js');
+    bot.launch();
+    console.log("🤖 Bot de Telegram iniciado (modo local)");
+  } catch (e) {
+    console.warn("⚠️ Bot no cargado. ¿Falta bot.js o BOT_TOKEN?");
+  }
+}
 
 
 
