@@ -250,7 +250,7 @@
 
     window.onload = async () => {
       try {
-        const res = await fetch('https://tienda-shelby.onrender.com/productos');
+        const res = await fetch('https://tienda-shelby.onrender.com/api/productos');
         productos = await res.json();
         window.productos = productos;
         console.log("📦 Productos cargados:", productos);
@@ -267,6 +267,7 @@
   </script>
 </body>
 </html>
+
 
 
 

@@ -19,20 +19,20 @@ app.use((req, res, next) => {
 // Servir archivos estáticos (index.html, tienda.js, etc.) desde /public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Ruta: obtener productos
-app.get('/productos', (req, res) => {
+// ✅ Ruta: obtener productos (¡usamos /api para evitar conflicto con productos.js!)
+app.get('/api/productos', (req, res) => {
   const productosPath = path.join(__dirname, 'productos.json');
   fs.readFile(productosPath, 'utf8', (err, data) => {
     if (err) {
       console.error("❌ Error al leer productos:", err);
       return res.status(500).json({ error: "Error al leer los productos" });
     }
-    res.send(JSON.parse(data));
+    res.json(JSON.parse(data));
   });
 });
 
 // Ruta: recibir pedido desde frontend y notificar al admin
-app.post('/pedido', async (req, res) => {
+app.post('/api/pedido', async (req, res) => {
   const pedido = req.body;
   const cliente = pedido.cliente || "Cliente anónimo";
 
@@ -52,7 +52,7 @@ app.post('/pedido', async (req, res) => {
   }
 });
 
-// ✅ Mostrar index.html si la ruta no es API
+// Ruta final: para todo lo demás, devolver index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -62,8 +62,10 @@ app.listen(PORT, () => {
   console.log(`✅ Servidor corriendo en el puerto ${PORT}`);
 });
 
-// Lanzar el bot de Telegram
-require('./bot.js');
+// 🔥 IMPORTANTE: Comentá esta línea si hacés pruebas locales con otra instancia
+// Descomentar solo en producción o cuando no estés ejecutando el bot en tu PC
+// require('./bot.js');
+
 
 
 
