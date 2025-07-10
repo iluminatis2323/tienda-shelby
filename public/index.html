@@ -197,11 +197,11 @@
   <div class="reseñas" id="reseñas">
     <h2>🗣️ Opiniones de nuestros usuarios</h2>
     <ul>
-      <li>⭐️⭐️⭐️⭐️⭐️ “La aplicación es excelente para ofrecer mis productos, muy intuitiva.” – Carla (comerciante)</li>
-      <li>⭐️⭐️⭐️⭐️ “Funciona muy bien, aunque se me trabó una vez, igual recomiendo.” – Pablo (vendedor)</li>
-      <li>⭐️⭐️⭐️⭐️⭐️ “Gracias a TucuShop, empecé a vender mis manualidades sin pagar comisiones.” – Florencia</li>
-      <li>⭐️⭐️⭐️ “Está buena pero estaría genial poder agregar más fotos por producto.” – Juan</li>
-      <li>⭐️⭐️⭐️⭐️⭐️ “Me encantó, fácil de usar y me conectó con muchos compradores.” – Nati</li>
+      <li>⭐⭐⭐⭐⭐ “La aplicación es excelente para ofrecer mis productos, muy intuitiva.” – Carla (comerciante)</li>
+      <li>⭐⭐⭐⭐ “Funciona muy bien, aunque se me trabó una vez, igual recomiendo.” – Pablo (vendedor)</li>
+      <li>⭐⭐⭐⭐⭐ “Gracias a TucuShop, empecé a vender mis manualidades sin pagar comisiones.” – Florencia</li>
+      <li>⭐⭐⭐ “Está buena pero estaría genial poder agregar más fotos por producto.” – Juan</li>
+      <li>⭐⭐⭐⭐⭐ “Me encantó, fácil de usar y me conectó con muchos compradores.” – Nati</li>
     </ul>
     <p style="text-align:center; margin-top: 10px;">
       <strong>📢 Esta app está pensada para comerciantes pequeños, feriantes, emprendedores y servicios locales.</strong>
@@ -215,7 +215,7 @@
       <option value="prestamos">💸 Préstamos personales</option>
       <option value="celulares">📱 Celulares y accesorios</option>
       <option value="notebooks">💻 Notebooks y tecnología</option>
-      <option value="electro">🛏️ Electrodomésticos y muebles</option>
+      <option value="electro">💭 Electrodomésticos y muebles</option>
       <option value="hogar">🪑 Hogar</option>
       <option value="utiles">🎒 Útiles escolares</option>
       <option value="herramientas">💰 Herramientas</option>
@@ -240,10 +240,10 @@
   <script src="tema.js"></script>
 
   <script type="module">
-    import { agregarAlCarrito, cargarCarrito, cambiarCantidad, quitarDelCarrito, actualizarCarrito, carrito } from './tienda.cmds/carrito.js';
-    import { mostrarProductos, filtrarProductos } from './tienda.cmds/productos.js';
-    import { enviarCarritoWhatsApp } from './tienda.cmds/whatsapp.js';
-    import { simularPago } from './tienda.cmds/simulador.js';
+    import { agregarAlCarrito, cargarCarrito, cambiarCantidad, quitarDelCarrito, actualizarCarrito, carrito } from './tienda.js';
+    import { mostrarProductos, filtrarProductos } from './productos.js';
+    import { enviarCarritoWhatsApp } from './whatsapp.js';
+    import { simularPago } from './simulador.js';
 
     let productos = [];
 
@@ -286,7 +286,6 @@
         cargarCarrito();
         actualizarCarrito();
 
-        // ✅ Ahora sí: conectar eventos de búsqueda después de cargar
         document.getElementById("busqueda").oninput = () => filtrarProductos(productos, agregarAlCarrito);
         document.getElementById("categoria").onchange = () => filtrarProductos(productos, agregarAlCarrito);
 
@@ -298,6 +297,7 @@
   </script>
 </body>
 </html>
+
 
 
 
