@@ -52,6 +52,11 @@ app.post('/pedido', async (req, res) => {
   }
 });
 
+// ✅ Mostrar index.html si la ruta no es API
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Iniciar servidor
 app.listen(PORT, () => {
   console.log(`✅ Servidor corriendo en el puerto ${PORT}`);
